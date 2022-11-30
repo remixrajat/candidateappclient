@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 
 const AddCandidate = (props) => {
-  const term = props ? props.filterTerm : "Add USer";
+  const history = useHistory();
+  const term =
+    history.location.pathname === "/" ? props.filterTerm : "Add USer";
 
   const [buttonName, setButtonName] = useState(term);
   useEffect(() => {
@@ -10,7 +13,7 @@ const AddCandidate = (props) => {
   }, [props?.filterTerm]);
   const [formData, setFormData] = useState({
     firstName: "",
-    lastname: "",
+    lastName: "",
     email: "",
     gender: "",
     skills: [],
@@ -84,8 +87,13 @@ const AddCandidate = (props) => {
   };
   return (
     <>
-      <form onSubmit={handleFormSubmit}>
+      <h1>{term}</h1>
+      <form
+        onSubmit={handleFormSubmit}
+        style={{ display: "flex", flexDirection: "row" }}
+      >
         <input
+          style={{ height: "20px" }}
           onChange={handleFormDataChange}
           type="text"
           name="firstName"
@@ -93,72 +101,81 @@ const AddCandidate = (props) => {
           placeholder="First name"
         />
         <input
-          name="lastname"
+          style={{ height: "20px" }}
+          name="lastName"
           onChange={handleFormDataChange}
           type="text"
           placeholder="Last name"
         />
         <input
+          style={{ height: "20px" }}
           onChange={handleFormDataChange}
           name="email"
           type="text"
           placeholder="Email"
         />
         <input
+          style={{ height: "20px" }}
           onChange={handleFormDataChange}
           name="gender"
           type="text"
           placeholder="Gender"
         />
 
-        <button>{buttonName}</button>
+        <button style={{ height: "30px" }}>{buttonName}</button>
       </form>
-      <button
-        onClick={() => {
-          // console.log("vhvjagdjk");
-          setShowSkillData(!showSkillData);
-        }}
-      >
-        Select skills
-      </button>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <div>
+          <button
+            onClick={() => {
+              // console.log("vhvjagdjk");
+              setShowSkillData(!showSkillData);
+            }}
+          >
+            Select skills
+          </button>
 
-      {showSkillData &&
-        skillsData.map((d, index) => {
-          return (
-            <div
-              name="skills"
-              key={index}
-              onClick={(e) => {
-                console.log(d);
-                handleSkillDataChange(e, d);
-              }}
-            >
-              {d}
-            </div>
-          );
-        })}
-      <button
-        onClick={() => {
-          // console.log("vhvjagdjk");
-          setShowLocationData(!showLocationData);
-        }}
-      >
-        Select locations
-      </button>
-      {showLocationData &&
-        locationsData.map((d, index) => {
-          return (
-            <div
-              name="skills"
-              key={index}
-              onClick={(e) => {
-                handleLocationDataChange(e, d);
-              }}
-            >
-              {d}
-            </div>
-          );
-        })}
+          {showSkillData &&
+            skillsData.map((d, index) => {
+              return (
+                <div
+                  name="skills"
+                  key={index}
+                  onClick={(e) => {
+                    console.log(d);
+                    handleSkillDataChange(e, d);
+                  }}
+                >
+                  {d}
+                </div>
+              );
+            })}
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              // console.log("vhvjagdjk");
+              setShowLocationData(!showLocationData);
+            }}
+          >
+            Select locations
+          </button>
+          {showLocationData &&
+            locationsData.map((d, index) => {
+              return (
+                <div
+                  name="skills"
+                  key={index}
+                  onClick={(e) => {
+                    handleLocationDataChange(e, d);
+                  }}
+                >
+                  {d}
+                </div>
+              );
+            })}
+        </div>
+      </div>
     </>
   );
 };

@@ -45,7 +45,6 @@ const CandidateTable = () => {
 
   return (
     <>
-      <h1>Filter Data</h1>
       <AddCandidate
         filterTerm="filter User"
         getFilteredData={getFilteredData}
