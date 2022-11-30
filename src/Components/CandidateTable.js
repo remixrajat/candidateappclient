@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import AddCandidate from "./AddCandidate";
 
@@ -6,35 +6,45 @@ const CandidateTable = () => {
   const [data, setData] = useState([]);
   const [skip, setSkip] = useState(0);
 
-  const ref = useRef();
+  const observer = useRef();
+  const lastElementRef = useCallback((node) => {
+    // console.log(node);
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        console.log("Visible");
+        setSkip((skip) => skip + 4);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, []);
 
   const getFilteredData = (gotdata) => {
-    setData(gotdata);
+    if (gotdata.length > 0) setData(gotdata);
+    else alert("No data found");
   };
 
   useEffect(() => {
     const fetchdata = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/candidates?skip=${skip}&limit=${2}`
+          `http://localhost:8000/candidates?skip=${skip}&limit=${4}`
         );
-        //   console.log(response);
-        setData(response.data);
-        setSkip((skip) => skip + 2);
-        // useIntersection(<></>,fsfsf)
+        if (response.data.length > 0) {
+          setData(response.data);
+        } else {
+          //   alert("No data found");
+        }
+        // setSkip((skip) => skip + 2);
       } catch (err) {
         console.error(err.message);
       }
     };
     fetchdata();
-  }, []);
+  }, [skip]);
 
   return (
     <>
-      {/* <div>
-        <input placeholder="filter" />
-        <button onClick={console.log("data")}>search</button>
-      </div> */}
       <h1>Filter Data</h1>
       <AddCandidate
         filterTerm="filter User"
@@ -45,8 +55,7 @@ const CandidateTable = () => {
           <div
             key={d._id}
             style={{ border: "1px solid black", margin: "20px" }}
-            // ref={index === data.length - 1 ? ref : null}
-            ref={ref}
+            ref={index === data.length - 1 ? lastElementRef : null}
           >
             <h2>{d.firstName}</h2>
             <h3>{d.lastName}</h3>

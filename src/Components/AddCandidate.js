@@ -110,6 +110,7 @@ const AddCandidate = (props) => {
           type="text"
           placeholder="Gender"
         />
+
         <button>{buttonName}</button>
       </form>
       <button
